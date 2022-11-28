@@ -6,15 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var body struct {
+var bodyUser struct {
 	Username string
 	Password string
 }
 
 func UserCreate(c *gin.Context) {
-	c.Bind(&body)
+	c.Bind(&bodyUser)
 
-	user := models.User{Username: body.Username, Password: body.Password}
+	user := models.User{Username: bodyUser.Username, Password: bodyUser.Password}
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
@@ -44,14 +44,14 @@ func UserShow(c *gin.Context) {
 func UserUpdate(c *gin.Context) {
 	id := c.Param("id")
 
-	c.Bind(&body)
+	c.Bind(&bodyUser)
 
 	var user models.User
 	initializers.DB.First(&user, id)
 
 	initializers.DB.Model(&user).Updates(models.User{
-		Username: body.Username,
-		Password: body.Password,
+		Username: bodyUser.Username,
+		Password: bodyUser.Password,
 	})
 
 	c.JSON(200, user)
