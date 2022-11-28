@@ -30,11 +30,18 @@ func main() {
 	router.GET("/statistics/:userid", controllers.StatisticIndexUser)
 
 	//Challenge
-	router.POST("/challenge", controllers.ChallengeCreate)
-	router.PUT("/challenge/:id", controllers.ChallengeUpdate)
-	router.GET("/challenge", controllers.ChallengeIndex)
-	router.GET("/challenge/:id", controllers.ChallengeShow)
-	router.DELETE("/challenge/:id", controllers.ChallengeDelete)
+	router.POST("/challenges", controllers.ChallengeCreate)
+	router.PUT("/challenges/:id", controllers.ChallengeUpdate)
+	router.GET("/challenges", controllers.ChallengeIndex)
+	router.GET("/challenges/:id", controllers.ChallengeShow)
+	router.DELETE("/challenges/:id", controllers.ChallengeDelete)
+
+	//Submission
+	router.POST("/submissions", controllers.SubmissionCreate)
+	router.PUT("/submissions/:id", controllers.SubmissionUpdate)
+	router.GET("/submissions", controllers.SubmissionIndex)
+	router.GET("/submissions/:id", controllers.SubmissionShow)
+	router.DELETE("/submissions/:id", controllers.SubmissionDelete)
 
 	router.Run()
 }
