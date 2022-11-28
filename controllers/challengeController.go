@@ -66,3 +66,12 @@ func ChallengeDelete(c *gin.Context) {
 
 	c.Status(200)
 }
+
+func ChallengeIndexUser(c *gin.Context) {
+	userID := c.Param("userid")
+
+	var challenges []models.Challenge
+	initializers.DB.Where("user_id = ?", userID).Find(&challenges)
+
+	c.JSON(200, challenges)
+}

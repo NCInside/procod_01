@@ -35,6 +35,7 @@ func main() {
 	router.GET("/challenges", controllers.ChallengeIndex)
 	router.GET("/challenges/:id", controllers.ChallengeShow)
 	router.DELETE("/challenges/:id", controllers.ChallengeDelete)
+	router.GET("/challenges/users/:userid", controllers.ChallengeShow)
 
 	//Submission
 	router.POST("/submissions", controllers.SubmissionCreate)
