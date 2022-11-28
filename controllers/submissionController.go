@@ -16,6 +16,11 @@ var bodySubm struct {
 	ChallengeID uint
 }
 
+var body struct {
+	UserID      uint
+	ChallengeID uint
+}
+
 func SubmissionCreate(c *gin.Context) {
 	c.Bind(&bodySubm)
 
@@ -81,4 +86,28 @@ func SubmissionDelete(c *gin.Context) {
 	initializers.DB.Delete(&models.Submission{}, id)
 
 	c.Status(200)
+}
+
+func SubmissionShowIndex(c *gin.Context) {
+	c.Bind(&body)
+
+	if body.ChallengeID == 0 && body.UserID == 0 {
+		c.JSON(400, "Parameter not found")
+
+	} else {
+		var submissions []models.Submission
+
+		if body.ChallengeID == 0 {
+			initializers.DB.Where("user_id = ?", body.UserID).Find(&submissions)
+
+		} else if body.UserID == 0 {
+			initializers.DB.Where("challenge_id = ?", body.ChallengeID).Find(&submissions)
+
+		} else {
+			initializers.DB.Where("user_id = ? AND challenge_id = ?", body.UserID, body.ChallengeID).Find(&submissions)
+
+		}
+
+		c.JSON(200, submissions)
+	}
 }
