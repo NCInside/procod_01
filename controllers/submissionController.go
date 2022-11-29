@@ -17,8 +17,8 @@ var bodySubm struct {
 }
 
 var body struct {
-	UserID      uint
-	ChallengeID uint
+	UserID      uint `form:"userid"`
+	ChallengeID uint `form:"challengeid"`
 }
 
 func SubmissionCreate(c *gin.Context) {
