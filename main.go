@@ -35,7 +35,31 @@ func main() {
 	router.GET("/challenges", controllers.ChallengeIndex)
 	router.GET("/challenges/:id", controllers.ChallengeShow)
 	router.DELETE("/challenges/:id", controllers.ChallengeDelete)
-	router.GET("/challenges/users/:userid", controllers.ChallengeShow)
+	router.GET("/challenges/users/:userid", controllers.ChallengeIndexUser)
+
+	//ChallengeLabel
+	router.POST("/challenges/label", controllers.ChallengeLbCreate)
+	router.PUT("/challenges/label/:id", controllers.ChallengeLbUpdate)
+	router.GET("/challenges/label", controllers.ChallengeLbIndex)
+	router.GET("/challenges/label/:id", controllers.ChallengeLbShow)
+	router.DELETE("/challenges/label/:id", controllers.ChallengeLbDelete)
+	router.GET("/challenges/label/challenge/:challengeid", controllers.ChallengeLbIndexChallenge)
+
+	//ChallengeTarget
+	router.POST("/challenges/target", controllers.ChallengeTrCreate)
+	router.PUT("/challenges/target/:id", controllers.ChallengeTrUpdate)
+	router.GET("/challenges/target", controllers.ChallengeTrIndex)
+	router.GET("/challenges/target/:id", controllers.ChallengeTrShow)
+	router.DELETE("/challenges/target/:id", controllers.ChallengeTrDelete)
+	router.GET("/challenges/target/challenge/:challengeid", controllers.ChallengeTrIndexChallenge)
+
+	//ChallengeExample
+	router.POST("/challenges/example", controllers.ChallengeExCreate)
+	router.PUT("/challenges/example/:id", controllers.ChallengeExUpdate)
+	router.GET("/challenges/example", controllers.ChallengeExIndex)
+	router.GET("/challenges/example/:id", controllers.ChallengeExShow)
+	router.DELETE("/challenges/example/:id", controllers.ChallengeExDelete)
+	router.GET("/challenges/example/challenge/:challengeid", controllers.ChallengeExIndexChallenge)
 
 	//Submission
 	router.POST("/submissions", controllers.SubmissionCreate)
