@@ -8,13 +8,17 @@ import (
 
 var bodyUser struct {
 	Username string
+	Email    string
 	Password string
 }
 
 func UserCreate(c *gin.Context) {
 	c.Bind(&bodyUser)
 
-	user := models.User{Username: bodyUser.Username, Password: bodyUser.Password}
+	user := models.User{Username: bodyUser.Username, Password: bodyUser.Password, Email: bodyUser.Email}
+
+	user.HashPassword(bodyUser.Password)
+
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
@@ -52,6 +56,7 @@ func UserUpdate(c *gin.Context) {
 	initializers.DB.Model(&user).Updates(models.User{
 		Username: bodyUser.Username,
 		Password: bodyUser.Password,
+		Email:    bodyUser.Email,
 	})
 
 	c.JSON(200, user)

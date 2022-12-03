@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/NCInside/procod_01/controllers"
 	"github.com/NCInside/procod_01/initializers"
+	"github.com/NCInside/procod_01/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,59 +16,90 @@ func main() {
 	router := gin.Default()
 
 	//User
-	router.POST("/users", controllers.UserCreate)
-	router.PUT("/users/:id", controllers.UserUpdate)
-	router.GET("/users", controllers.UserIndex)
-	router.GET("/users/:id", controllers.UserShow)
-	router.DELETE("/users/:id", controllers.UserDelete)
+	users := router.Group("/users")
+	{
+		users.POST("/", controllers.UserCreate)
+		users.PUT("/:id", controllers.UserUpdate)
+		users.GET("/", controllers.UserIndex)
+		users.GET("/:id", controllers.UserShow)
+		users.DELETE("/:id", controllers.UserDelete)
+	}
 
 	//Statistic
-	router.POST("/statistics", controllers.StatisticCreate)
-	router.PUT("/statistics/:id", controllers.StatisticUpdate)
-	router.GET("/statistics", controllers.StatisticIndex)
-	router.GET("/statistics/:id", controllers.StatisticShow)
-	router.DELETE("/statistics/:id", controllers.StatisticDelete)
-	router.GET("/statistics/users/:userid", controllers.StatisticIndexUser)
+	statistics := router.Group("/statistics")
+	{
+		statistics.POST("/", controllers.StatisticCreate)
+		statistics.PUT("/:id", controllers.StatisticUpdate)
+		statistics.GET("/", controllers.StatisticIndex)
+		statistics.GET("/:id", controllers.StatisticShow)
+		statistics.DELETE("/:id", controllers.StatisticDelete)
+		statistics.GET("/users/:userid", controllers.StatisticIndexUser)
+	}
 
 	//Challenge
-	router.POST("/challenges", controllers.ChallengeCreate)
-	router.PUT("/challenges/:id", controllers.ChallengeUpdate)
-	router.GET("/challenges", controllers.ChallengeIndex)
-	router.GET("/challenges/:id", controllers.ChallengeShow)
-	router.DELETE("/challenges/:id", controllers.ChallengeDelete)
-	router.GET("/challenges/users/:userid", controllers.ChallengeIndexUser)
+	challenges := router.Group("/challenges")
+	{
+		challenges.POST("/", controllers.ChallengeCreate)
+		challenges.PUT("/:id", controllers.ChallengeUpdate)
+		challenges.GET("/", controllers.ChallengeIndex)
+		challenges.GET("/:id", controllers.ChallengeShow)
+		challenges.DELETE("/:id", controllers.ChallengeDelete)
+		challenges.GET("/users/:userid", controllers.ChallengeIndexUser)
 
-	//ChallengeLabel
-	router.POST("/challenges/label", controllers.ChallengeLbCreate)
-	router.PUT("/challenges/label/:id", controllers.ChallengeLbUpdate)
-	router.GET("/challenges/label", controllers.ChallengeLbIndex)
-	router.GET("/challenges/label/:id", controllers.ChallengeLbShow)
-	router.DELETE("/challenges/label/:id", controllers.ChallengeLbDelete)
-	router.GET("/challenges/label/challenge/:challengeid", controllers.ChallengeLbIndexChallenge)
+		//ChallengeLabel
+		label := challenges.Group("/label")
+		{
+			label.POST("/", controllers.ChallengeLbCreate)
+			label.PUT("/:id", controllers.ChallengeLbUpdate)
+			label.GET("/", controllers.ChallengeLbIndex)
+			label.GET("/:id", controllers.ChallengeLbShow)
+			label.DELETE("/:id", controllers.ChallengeLbDelete)
+			label.GET("/challenge/:challengeid", controllers.ChallengeLbIndexChallenge)
+		}
 
-	//ChallengeTarget
-	router.POST("/challenges/target", controllers.ChallengeTrCreate)
-	router.PUT("/challenges/target/:id", controllers.ChallengeTrUpdate)
-	router.GET("/challenges/target", controllers.ChallengeTrIndex)
-	router.GET("/challenges/target/:id", controllers.ChallengeTrShow)
-	router.DELETE("/challenges/target/:id", controllers.ChallengeTrDelete)
-	router.GET("/challenges/target/challenge/:challengeid", controllers.ChallengeTrIndexChallenge)
+		//ChallengeTarget
+		target := challenges.Group("/target")
+		{
+			target.POST("/", controllers.ChallengeTrCreate)
+			target.PUT("/:id", controllers.ChallengeTrUpdate)
+			target.GET("/", controllers.ChallengeTrIndex)
+			target.GET("/:id", controllers.ChallengeTrShow)
+			target.DELETE("/:id", controllers.ChallengeTrDelete)
+			target.GET("/challenge/:challengeid", controllers.ChallengeTrIndexChallenge)
+		}
 
-	//ChallengeExample
-	router.POST("/challenges/example", controllers.ChallengeExCreate)
-	router.PUT("/challenges/example/:id", controllers.ChallengeExUpdate)
-	router.GET("/challenges/example", controllers.ChallengeExIndex)
-	router.GET("/challenges/example/:id", controllers.ChallengeExShow)
-	router.DELETE("/challenges/example/:id", controllers.ChallengeExDelete)
-	router.GET("/challenges/example/challenge/:challengeid", controllers.ChallengeExIndexChallenge)
+		//ChallengeExample
+		example := challenges.Group("/example")
+		{
+			example.POST("/", controllers.ChallengeExCreate)
+			example.PUT("/:id", controllers.ChallengeExUpdate)
+			example.GET("/", controllers.ChallengeExIndex)
+			example.GET("/:id", controllers.ChallengeExShow)
+			example.DELETE("/:id", controllers.ChallengeExDelete)
+			example.GET("/challenge/:challengeid", controllers.ChallengeExIndexChallenge)
+
+		}
+	}
 
 	//Submission
-	router.POST("/submissions", controllers.SubmissionCreate)
-	router.PUT("/submissions/:id", controllers.SubmissionUpdate)
-	router.GET("/submissions", controllers.SubmissionIndex)
-	router.GET("/submissions/:id", controllers.SubmissionShow)
-	router.DELETE("/submissions/:id", controllers.SubmissionDelete)
-	router.GET("/submissions/id", controllers.SubmissionShowIndex)
+	submissions := router.Group("/submissions")
+	{
+		submissions.POST("/", controllers.SubmissionCreate)
+		submissions.PUT("/:id", controllers.SubmissionUpdate)
+		submissions.GET("/", controllers.SubmissionIndex)
+		submissions.GET("/:id", controllers.SubmissionShow)
+		submissions.DELETE("/:id", controllers.SubmissionDelete)
+		submissions.GET("/id", controllers.SubmissionShowIndex)
+	}
+
+	api := router.Group("/api")
+	{
+		api.POST("/token", controllers.GenerateToken)
+		secured := api.Group("/secured").Use(middlewares.Auth())
+		{
+			secured.GET("/ping", controllers.Ping)
+		}
+	}
 
 	router.Run()
 }
