@@ -28,7 +28,12 @@ func ChallengeCreate(c *gin.Context) {
 
 func ChallengeIndex(c *gin.Context) {
 	var challenges []models.Challenge
-	initializers.DB.Find(&challenges)
+	result := initializers.DB.Preload("ChallengeLabels").Find(&challenges)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, challenges)
 }

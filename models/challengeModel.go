@@ -6,7 +6,7 @@ type Challenge struct {
 	gorm.Model
 	Title             string
 	Description       string
-	ChallengeLabels   []ChallengeLabel
+	ChallengeLabels   []Label `gorm:"many2many:challenge_labels;"`
 	ChallengeExamples []ChallengeExample
 	ChallengeTargets  []ChallengeTarget
 	Submissions       []Submission

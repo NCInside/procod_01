@@ -13,5 +13,5 @@ func init() {
 func main() {
 	initializers.DB.AutoMigrate(
 		&models.User{}, &models.Statistic{}, &models.Challenge{},
-		&models.ChallengeExample{}, &models.ChallengeLabel{}, &models.ChallengeTarget{}, &models.Submission{})
+		&models.ChallengeExample{}, &models.Label{}, &models.ChallengeTarget{}, &models.Submission{})
 }

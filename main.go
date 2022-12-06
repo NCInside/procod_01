@@ -53,12 +53,11 @@ func main() {
 		//ChallengeLabel
 		label := challenges.Group("/label").Use(middlewares.Auth())
 		{
-			label.POST("/", controllers.ChallengeLbCreate)
-			label.PUT("/:id", controllers.ChallengeLbUpdate)
-			label.GET("/", controllers.ChallengeLbIndex)
-			label.GET("/:id", controllers.ChallengeLbShow)
-			label.DELETE("/:id", controllers.ChallengeLbDelete)
-			label.GET("/challenge/:challengeid", controllers.ChallengeLbIndexChallenge)
+			label.POST("/", controllers.LabelCreate)
+			label.PUT("/:id", controllers.LabelUpdate)
+			label.GET("/", controllers.LabelIndex)
+			label.GET("/:id", controllers.LabelShow)
+			label.DELETE("/:id", controllers.LabelDelete)
 		}
 
 		//ChallengeTarget

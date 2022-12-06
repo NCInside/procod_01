@@ -4,6 +4,7 @@ import (
 	"github.com/NCInside/procod_01/initializers"
 	"github.com/NCInside/procod_01/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 var bodyUser struct {
@@ -31,7 +32,10 @@ func UserCreate(c *gin.Context) {
 
 func UserIndex(c *gin.Context) {
 	var users []models.User
-	initializers.DB.Model(&models.User{}).Preload("Challenges").Preload("Statistics").Find(&users)
+	initializers.DB.Model(&models.User{}).Preload("Challenges").Preload("Statistics",
+		func(tx *gorm.DB) *gorm.DB {
+			return tx.Limit(1).Order("ID DESC")
+		}).Preload("Submissions").Find(&users)
 
 	c.JSON(200, users)
 }
