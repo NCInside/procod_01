@@ -19,35 +19,39 @@ func main() {
 	users := router.Group("/users")
 	{
 		users.POST("/", controllers.UserCreate)
-		users.PUT("/:id", controllers.UserUpdate)
-		users.GET("/", controllers.UserIndex)
-		users.GET("/:id", controllers.UserShow)
-		users.DELETE("/:id", controllers.UserDelete)
+		users.Use(middlewares.Auth()).PUT("/:id", controllers.UserUpdate)
+		users.Use(middlewares.Auth()).GET("/", controllers.UserIndex)
+		users.Use(middlewares.Auth()).GET("/:id", controllers.UserShow)
+		users.Use(middlewares.Auth()).DELETE("/:id", controllers.UserDelete)
 	}
 
 	//Statistic
-	statistics := router.Group("/statistics")
+	statistics := router.Group("/statistics").Use(middlewares.Auth())
 	{
 		statistics.POST("/", controllers.StatisticCreate)
 		statistics.PUT("/:id", controllers.StatisticUpdate)
 		statistics.GET("/", controllers.StatisticIndex)
 		statistics.GET("/:id", controllers.StatisticShow)
 		statistics.DELETE("/:id", controllers.StatisticDelete)
-		statistics.GET("/users/:userid", controllers.StatisticIndexUser)
+		statistics.GET("/users/all/:userid", controllers.StatisticIndexUser)
+		statistics.GET("/users/:userid", controllers.StatisticShowUser)
 	}
 
 	//Challenge
 	challenges := router.Group("/challenges")
 	{
-		challenges.POST("/", controllers.ChallengeCreate)
-		challenges.PUT("/:id", controllers.ChallengeUpdate)
-		challenges.GET("/", controllers.ChallengeIndex)
-		challenges.GET("/:id", controllers.ChallengeShow)
-		challenges.DELETE("/:id", controllers.ChallengeDelete)
-		challenges.GET("/users/:userid", controllers.ChallengeIndexUser)
+
+		challenges_auth := challenges.Use(middlewares.Auth())
+
+		challenges_auth.POST("/", controllers.ChallengeCreate)
+		challenges_auth.PUT("/:id", controllers.ChallengeUpdate)
+		challenges_auth.GET("/", controllers.ChallengeIndex)
+		challenges_auth.GET("/:id", controllers.ChallengeShow)
+		challenges_auth.DELETE("/:id", controllers.ChallengeDelete)
+		challenges_auth.GET("/users/:userid", controllers.ChallengeIndexUser)
 
 		//ChallengeLabel
-		label := challenges.Group("/label")
+		label := challenges.Group("/label").Use(middlewares.Auth())
 		{
 			label.POST("/", controllers.ChallengeLbCreate)
 			label.PUT("/:id", controllers.ChallengeLbUpdate)
@@ -58,7 +62,7 @@ func main() {
 		}
 
 		//ChallengeTarget
-		target := challenges.Group("/target")
+		target := challenges.Group("/target").Use(middlewares.Auth())
 		{
 			target.POST("/", controllers.ChallengeTrCreate)
 			target.PUT("/:id", controllers.ChallengeTrUpdate)
@@ -69,7 +73,7 @@ func main() {
 		}
 
 		//ChallengeExample
-		example := challenges.Group("/example")
+		example := challenges.Group("/example").Use(middlewares.Auth())
 		{
 			example.POST("/", controllers.ChallengeExCreate)
 			example.PUT("/:id", controllers.ChallengeExUpdate)
@@ -82,7 +86,7 @@ func main() {
 	}
 
 	//Submission
-	submissions := router.Group("/submissions")
+	submissions := router.Group("/submissions").Use(middlewares.Auth())
 	{
 		submissions.POST("/", controllers.SubmissionCreate)
 		submissions.PUT("/:id", controllers.SubmissionUpdate)

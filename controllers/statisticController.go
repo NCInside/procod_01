@@ -88,3 +88,12 @@ func StatisticIndexUser(c *gin.Context) {
 
 	c.JSON(200, statistics)
 }
+
+func StatisticShowUser(c *gin.Context) {
+	userID := c.Param("userid")
+
+	var statistic models.Statistic
+	initializers.DB.Where("user_id = ?", userID).Last(&statistic)
+
+	c.JSON(200, statistic)
+}

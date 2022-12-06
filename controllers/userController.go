@@ -31,7 +31,7 @@ func UserCreate(c *gin.Context) {
 
 func UserIndex(c *gin.Context) {
 	var users []models.User
-	initializers.DB.Find(&users)
+	initializers.DB.Model(&models.User{}).Preload("Challenges").Preload("Statistics").Find(&users)
 
 	c.JSON(200, users)
 }
@@ -40,7 +40,9 @@ func UserShow(c *gin.Context) {
 	id := c.Param("id")
 
 	var user models.User
-	initializers.DB.First(&user, id)
+	if err := initializers.DB.First(&user, id).Error; err != nil {
+		c.Status(400)
+	}
 
 	c.JSON(200, user)
 }
