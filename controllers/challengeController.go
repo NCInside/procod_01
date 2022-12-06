@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/NCInside/procod_01/initializers"
 	"github.com/NCInside/procod_01/models"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 var bodyChal struct {
@@ -27,8 +30,28 @@ func ChallengeCreate(c *gin.Context) {
 }
 
 func ChallengeIndex(c *gin.Context) {
+
+	label := c.Query("label")
+
 	var challenges []models.Challenge
-	result := initializers.DB.Preload("ChallengeLabels").Find(&challenges)
+	var result *gorm.DB
+
+	labelId, err := strconv.Atoi(label)
+
+	if err != nil {
+
+		result = initializers.DB.
+			Preload("ChallengeLabels").Preload("ChallengeExamples").Preload("ChallengeTargets").Find(&challenges)
+
+	} else {
+
+		result = initializers.DB.Where(
+			"EXISTS (?)",
+			initializers.DB.Table("challenge_labels").Where(
+				"challenges.id = challenge_labels.challenge_id AND challenge_labels.label_id = ?", labelId),
+		).Preload("ChallengeLabels").Preload("ChallengeExamples").Preload("ChallengeTargets").Find(&challenges)
+
+	}
 
 	if result.Error != nil {
 		c.Status(400)
@@ -42,7 +65,12 @@ func ChallengeShow(c *gin.Context) {
 	id := c.Param("id")
 
 	var challenge models.Challenge
-	initializers.DB.First(&challenge, id)
+	result := initializers.DB.Preload("ChallengeLabels").Preload("ChallengeExamples").Preload("ChallengeTargets").First(&challenge, id)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, challenge)
 }
@@ -53,13 +81,23 @@ func ChallengeUpdate(c *gin.Context) {
 	c.Bind(&bodyChal)
 
 	var challenge models.Challenge
-	initializers.DB.First(&challenge, id)
+	result := initializers.DB.First(&challenge, id)
 
-	initializers.DB.Model(&challenge).Updates(models.Challenge{
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	result = initializers.DB.Model(&challenge).Updates(models.Challenge{
 		Title:       bodyChal.Title,
 		Description: bodyChal.Description,
 		UserID:      bodyChal.UserID,
 	})
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, challenge)
 }
@@ -79,4 +117,8 @@ func ChallengeIndexUser(c *gin.Context) {
 	initializers.DB.Where("user_id = ?", userID).Find(&challenges)
 
 	c.JSON(200, challenges)
+}
+
+func ChallengeEditLabel(c *gin.Context) {
+
 }

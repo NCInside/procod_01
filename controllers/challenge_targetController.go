@@ -52,13 +52,23 @@ func ChallengeTrUpdate(c *gin.Context) {
 	c.Bind(&bodyChalTr)
 
 	var challengeTr models.ChallengeTarget
-	initializers.DB.First(&challengeTr, id)
+	result := initializers.DB.First(&challengeTr, id)
 
-	initializers.DB.Model(&challengeTr).Updates(models.ChallengeTarget{
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	result = initializers.DB.Model(&challengeTr).Updates(models.ChallengeTarget{
 		Input:         bodyChalTr.Input,
 		Target_output: bodyChalTr.Target_output,
 		ChallengeID:   bodyChalTr.ChallengeID,
 	})
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, challengeTr)
 }

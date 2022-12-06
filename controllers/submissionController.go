@@ -65,9 +65,14 @@ func SubmissionUpdate(c *gin.Context) {
 	c.Bind(&bodySubm)
 
 	var submission models.Submission
-	initializers.DB.First(&submission, id)
+	result := initializers.DB.First(&submission, id)
 
-	initializers.DB.Model(&submission).Updates(models.Submission{
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	result = initializers.DB.Model(&submission).Updates(models.Submission{
 		Code:        bodySubm.Code,
 		Runtime:     bodySubm.Runtime,
 		Is_correct:  bodySubm.Is_correct,
@@ -76,6 +81,11 @@ func SubmissionUpdate(c *gin.Context) {
 		UserID:      bodySubm.UserID,
 		ChallengeID: bodySubm.ChallengeID,
 	})
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, submission)
 }

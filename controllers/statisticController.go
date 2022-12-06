@@ -37,8 +37,14 @@ func StatisticCreate(c *gin.Context) {
 }
 
 func StatisticIndex(c *gin.Context) {
+
 	var statistics []models.Statistic
-	initializers.DB.Find(&statistics)
+	result := initializers.DB.Find(&statistics)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, statistics)
 }
@@ -47,7 +53,7 @@ func StatisticShow(c *gin.Context) {
 	id := c.Param("id")
 
 	var statistic models.Statistic
-	initializers.DB.First(&statistic, id)
+	initializers.DB.Last(&statistic, id)
 
 	c.JSON(200, statistic)
 }
@@ -58,9 +64,14 @@ func StatisticUpdate(c *gin.Context) {
 	c.Bind(&bodyStat)
 
 	var statistic models.Statistic
-	initializers.DB.First(&statistic, id)
+	result := initializers.DB.First(&statistic, id)
 
-	initializers.DB.Model(&statistic).Updates(models.Statistic{
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	result = initializers.DB.Model(&statistic).Updates(models.Statistic{
 		Total_memory:            bodyStat.Total_memory,
 		Total_runtime:           bodyStat.Total_runtime,
 		Num_challenge_attempted: bodyStat.Num_challenge_attempted,
@@ -68,6 +79,11 @@ func StatisticUpdate(c *gin.Context) {
 		Num_challenge_made:      bodyStat.Num_challenge_made,
 		UserID:                  bodyStat.UserID,
 	})
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, statistic)
 }

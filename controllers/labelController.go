@@ -25,15 +25,15 @@ func LabelCreate(c *gin.Context) {
 }
 
 func LabelIndex(c *gin.Context) {
-	var label []models.Label
-	result := initializers.DB.Find(&label)
+	var labels []models.Label
+	result := initializers.DB.Find(&labels)
 
 	if result.Error != nil {
 		c.Status(400)
 		return
 	}
 
-	c.JSON(200, label)
+	c.JSON(200, labels)
 }
 
 func LabelShow(c *gin.Context) {

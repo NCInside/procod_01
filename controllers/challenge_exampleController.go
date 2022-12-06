@@ -54,14 +54,24 @@ func ChallengeExUpdate(c *gin.Context) {
 	c.Bind(&bodyChalEx)
 
 	var challengeEx models.ChallengeExample
-	initializers.DB.First(&challengeEx, id)
+	result := initializers.DB.First(&challengeEx, id)
 
-	initializers.DB.Model(&challengeEx).Updates(models.ChallengeExample{
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	result = initializers.DB.Model(&challengeEx).Updates(models.ChallengeExample{
 		Ex_input:    bodyChalEx.Ex_input,
 		Ex_output:   bodyChalEx.Ex_output,
 		Description: bodyChalEx.Description,
 		ChallengeID: bodyChalEx.ChallengeID,
 	})
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, challengeEx)
 }

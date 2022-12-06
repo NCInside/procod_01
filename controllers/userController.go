@@ -32,10 +32,16 @@ func UserCreate(c *gin.Context) {
 
 func UserIndex(c *gin.Context) {
 	var users []models.User
-	initializers.DB.Model(&models.User{}).Preload("Challenges").Preload("Statistics",
+
+	result := initializers.DB.Preload("Statistics",
 		func(tx *gorm.DB) *gorm.DB {
 			return tx.Limit(1).Order("ID DESC")
-		}).Preload("Submissions").Find(&users)
+		}).Limit(10).Find(&users) //need to edit the order
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
 
 	c.JSON(200, users)
 }
@@ -44,8 +50,14 @@ func UserShow(c *gin.Context) {
 	id := c.Param("id")
 
 	var user models.User
-	if err := initializers.DB.First(&user, id).Error; err != nil {
+	result := initializers.DB.Preload("Statistics",
+		func(tx *gorm.DB) *gorm.DB {
+			return tx.Limit(1).Order("ID DESC")
+		}).First(&user, id)
+
+	if result.Error != nil {
 		c.Status(400)
+		return
 	}
 
 	c.JSON(200, user)
