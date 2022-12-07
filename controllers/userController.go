@@ -35,8 +35,8 @@ func UserIndex(c *gin.Context) {
 
 	result := initializers.DB.Preload("Statistics",
 		func(tx *gorm.DB) *gorm.DB {
-			return tx.Order("ID DESC").Limit(1)
-		}).Find(&users)
+			return tx.Order("ID DESC")
+		}).Preload("Challenges").Find(&users)
 	if result.Error != nil {
 		c.Status(400)
 		return
@@ -51,7 +51,7 @@ func UserShow(c *gin.Context) {
 	var user models.User
 	result := initializers.DB.Preload("Statistics",
 		func(tx *gorm.DB) *gorm.DB {
-			return tx.Limit(1).Order("ID DESC")
+			return tx.Order("ID DESC")
 		}).First(&user, id)
 
 	if result.Error != nil {

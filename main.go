@@ -49,7 +49,6 @@ func main() {
 		challenges_auth.GET("/:id", controllers.ChallengeShow)
 		challenges_auth.DELETE("/:id", controllers.ChallengeDelete)
 		challenges_auth.GET("/users/:userid", controllers.ChallengeIndexUser)
-		challenges_auth.POST("/submission/:id", controllers.ChallengeSubmission)
 
 		//ChallengeLabel
 		label := challenges.Group("/label").Use(middlewares.Auth())
