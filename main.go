@@ -49,15 +49,16 @@ func main() {
 		challenges_auth.GET("/:id", controllers.ChallengeShow)
 		challenges_auth.DELETE("/:id", controllers.ChallengeDelete)
 		challenges_auth.GET("/users/:userid", controllers.ChallengeIndexUser)
+		challenges_auth.POST("/submission/:id", controllers.ChallengeSubmission)
 
 		//ChallengeLabel
 		label := challenges.Group("/label").Use(middlewares.Auth())
 		{
-			label.POST("/", controllers.LabelCreate)
+			label.POST("/", controllers.ChallengeLabelCreate)
 			label.PUT("/:id", controllers.LabelUpdate)
 			label.GET("/", controllers.LabelIndex)
 			label.GET("/:id", controllers.LabelShow)
-			label.DELETE("/:id", controllers.LabelDelete)
+			label.DELETE("/", controllers.ChallengeLabelDelete)
 		}
 
 		//ChallengeTarget
@@ -93,6 +94,16 @@ func main() {
 		submissions.GET("/:id", controllers.SubmissionShow)
 		submissions.DELETE("/:id", controllers.SubmissionDelete)
 		submissions.GET("/id", controllers.SubmissionShowIndex)
+	}
+
+	//Label
+	label := router.Group("/labels").Use(middlewares.Auth())
+	{
+		label.POST("/", controllers.LabelCreate)
+		label.PUT("/:id", controllers.LabelUpdate)
+		label.GET("/", controllers.LabelIndex)
+		label.GET("/:id", controllers.LabelShow)
+		label.DELETE("/:id", controllers.LabelDelete)
 	}
 
 	api := router.Group("/api")

@@ -119,6 +119,19 @@ func ChallengeIndexUser(c *gin.Context) {
 	c.JSON(200, challenges)
 }
 
-func ChallengeEditLabel(c *gin.Context) {
+func ChallengeSubmission(c *gin.Context) {
+	id := c.Param("id")
+
+	var challenges []models.Challenge
+	result := initializers.DB.Where("id IN (?)",
+		initializers.DB.Table("submissions").Select("challenge_id").
+			Where("is_correct = 0 AND user_id = ?", id)).Find(&challenges)
+
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+
+	c.JSON(200, challenges)
 
 }

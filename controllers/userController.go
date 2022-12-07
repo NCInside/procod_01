@@ -35,9 +35,8 @@ func UserIndex(c *gin.Context) {
 
 	result := initializers.DB.Preload("Statistics",
 		func(tx *gorm.DB) *gorm.DB {
-			return tx.Limit(1).Order("ID DESC")
-		}).Limit(10).Find(&users) //need to edit the order
-
+			return tx.Order("ID DESC").Limit(1)
+		}).Find(&users)
 	if result.Error != nil {
 		c.Status(400)
 		return
