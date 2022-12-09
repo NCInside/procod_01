@@ -52,7 +52,7 @@ func UserShow(c *gin.Context) {
 	result := initializers.DB.Preload("Statistics",
 		func(tx *gorm.DB) *gorm.DB {
 			return tx.Order("ID DESC")
-		}).Preload("challenges").First(&user, id)
+		}).Preload("Challenges").First(&user, id)
 
 	if result.Error != nil {
 		c.Status(400)
